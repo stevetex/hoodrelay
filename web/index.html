@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" type="text/css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.standalone.min.css">
+  <link rel="stylesheet" href="now-ui-kit.css" type="text/css">
+  <link rel="stylesheet" href="assets/css/nucleo-icons.css" type="text/css">
+  <!-- <script src="assets/js/navbar-ontop.js"></script> -->
+  <link rel="icon" href="https://templates.pingendo.com/assets/Pingendo_favicon.ico">
+  <title>Range Hood</title>
+  <meta name="description" content="Control the fan and light">
+  <meta name="keywords" content="range hood fan light">
+  <script> const urihost = 'http://localhost:8081/';   
+    const btn_light_on = 'btn_light_on';
+    const btn_light_off = 'btn_light_off';
+    const btn_fan_off = 'btn_fan_off';
+    const btn_fan_low = 'btn_fan_low';
+    const btn_fan_med ='btn_fan_med';
+    const btn_fan_high = 'btn_fan_high';
+    
+    function allBtnsOff() {
+      const btn_array = [btn_light_on, btn_light_off, btn_fan_off,
+                         btn_fan_low, btn_fan_med, btn_fan_high];
+      btn_array.forEach(function(item) {
+        var element = document.getElementById(item);
+        element.setAttribute('checked', 'false');
+        element.parentNode.setAttribute('class', 'btn btn-primary');
+      });
+    }
+   
+    function refreshUI() {
+      var ctlid_light = btn_light_off;
+      var ctlid_fan = btn_fan_off;
+      var stateuri = urihost + 'state';
+      try {
+        fetch(stateuri, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        })
+        .then(response =>  {
+          if (response.status == 200) {
+            response.json().then(data => {
+              if (data.light === 1)
+                ctlid_light = btn_light_on;
+              switch (data.fan) {
+                case 1: ctlid_fan = btn_fan_low; break;
+                case 2: ctlid_fan = btn_fan_med; break;
+                case 3: ctlid_fan = btn_fan_high; break;
+              }
+              allBtnsOff();
+              var element = document.getElementById(ctlid_light); 
+              element.setAttribute('checked', 'true');
+              element.parentNode.setAttribute('class', 'btn btn-primary active');
+              element = document.getElementById(ctlid_fan); 
+              element.setAttribute('checked', 'true');
+              element.parentNode.setAttribute('class', 'btn btn-primary active');
+              return data;
+            });
+          } else {
+            console.log('Unable to GET state from ${stateuri}, status code ${response.status}');
+          }
+          return response;
+        });
+      } catch(err) {
+        console.error('fectch() failed: ' + err.message);
+      }
+   }
+   
+   function lightclick(obj) {
+     var valstr;
+     var i;
+     for (i =0; i<obj.childNodes.length; i++) {
+       if (obj.childNodes[i].name === 'btn_light') {
+         valstr = (obj.childNodes[i].id === btn_light_on) ? 'on' : 'off';
+         break;
+       }
+     }
+     var urlstr = urihost + 'light?value=' + valstr;
+     fetch(urlstr, {
+       method: 'POST',
+       headers: {
+         'Content-Type': 'application/json'
+       }
+     })
+     .then(response => {
+       if (response.status != 200)
+         console.log('Fetch error setting light, status: ' + response.status);
+     });
+   }
+   
+   function fanclick(obj) {
+     var fanval = 0;
+     var i;
+     for (i =0; i<obj.childNodes.length; i++) {
+       if (obj.childNodes[i].name === 'btn_fan') {
+         switch (obj.childNodes[i].id) {
+           case btn_fan_low: fanval = 1; break;
+           case btn_fan_med: fanval = 2; break;
+           case btn_fan_high: fanval = 3; break;
+         }
+         break;
+       }
+     }
+     var urlstr = urihost + 'fan?speed=' + fanval;
+     fetch(urlstr, {
+       method: 'POST',
+       headers: {
+         'Content-Type': 'application/json'
+       }
+     })
+     .then(response => {
+       if (response.status != 200)
+         console.log('Fetch error setting light, status: ' + response.status);
+     });
+   }
+ </script>
+</head>
+
+<body class="" onload="refreshUI()">
+  <div class="py-5 text-center parallax cover gradient-overlay" style="background-image: url(&quot;./assets/img/header.jpg&quot;); position: relative; background-position: 50% calc(50% + 42.75px); background-size: cover;">
+    <div class="container d-flex flex-column">
+      <div class="row my-auto">
+        <div class="col-md-12 text-white">
+          <img class="mb-5" src="./assets/img/hood&#10;.png" width="100">
+          <h1 class="mb-3 display-1">Teixeira Kitchen Hood</h1>
+          <div class="py-5">
+            <div class="mb-1">Light</div>
+            <div class="btn-group btn-group-toggle" data-toggle="buttons">
+              <label class="btn btn-primary active" onclick="lightclick(this)">
+                <input type="radio" name="btn_light" id="btn_light_off" autocomplete="off" checked=""> Off </label>
+              <label class="btn btn-primary" onclick="lightclick(this)">
+                <input type="radio" name="btn_light" id="btn_light_on" autocomplete="off"> On </label>
+            </div>
+            <div class="py-5">
+              <div class="mb-1">Fan setting</div>
+              <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                <label class="btn btn-primary active" onclick="fanclick(this)">
+                  <input type="radio" name="btn_fan" id="btn_fan_off" autocomplete="off" checked=""> Off </label>
+                <label class="btn btn-primary" onclick="fanclick(this)">
+                  <input type="radio" name="btn_fan" id="btn_fan_low" autocomplete="off"> Low </label>
+                <label class="btn btn-primary" onclick="fanclick(this)">
+                  <input type="radio" name="btn_fan" id="btn_fan_med" autocomplete="off" checked=""> Medium </label>
+                <label class="btn btn-primary" onclick="fanclick(this)">
+                  <input type="radio" name="btn_fan" id="btn_fan_high" autocomplete="off" checked=""> High </label>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <pingendo onclick="window.open('https://pingendo.com/', '_blank')" style="cursor:pointer;position: fixed;bottom: 20px;right:20px;padding:4px;background-color: #00b0eb;border-radius: 8px; width:220px;display:flex;flex-direction:row;align-items:center;justify-content:center;font-size:14px;color:white">Made with Pingendo Free&nbsp;&nbsp;<img src="https://pingendo.com/site-assets/Pingendo_logo_big.png" class="d-block" alt="Pingendo logo" height="16"></pingendo>
+  </div>
+  <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+  <script src="assets/js/parallax.js"></script>
+</body>
+
+</html>
