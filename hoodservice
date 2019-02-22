@@ -1,14 +1,14 @@
 #!/bin/sh
 #/etc/init.d/hoodservice
 export PATH=$PATH:/usr/local/bin
-export NODE_PATH=$NODE_PATH:/usr/local/lib/node_modules
+export NODE_PATH=$NODE_PATH:/usr/lib/node_modules
 
 case "$1" in
 start)
-exec forever --sourceDir=/usr/local/bin/server -p /usr/local/bin/server myNodeApp.js  #scriptarguments
+exec forever --sourceDir=/usr/local/bin/server -p /usr/local/bin/server hoodrelay.js  #scriptarguments
 ;;
 stop)
-exec forever stop --sourceDir=/usr/local/bin/server myNodeApp.js
+exec forever stop --sourceDir=/usr/local/bin/server hoodrelay.js
 ;;
 *)
 echo "Usage: /etc/init.d/hoodservice {start|stop}"
