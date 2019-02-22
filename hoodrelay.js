@@ -33,6 +33,12 @@ function dofan(speed) {
     }
 }
 
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    next();
+  });
+
 app.post('/light', function (req, res) {
     console.log('received POST: %s', req.query);
     var val = req.query.value;
@@ -58,7 +64,7 @@ app.post('/fan', function (req, res) {
 });
 
 app.get('/state', function (req, res) {
-    console.log('received GET: %s', req.query);
+    console.log('received GET: %s', req.query.originalUrl);
     var fanval = 0; 
     var lightval = light.read();
     if (lofan.read() === 1) {
