@@ -32,11 +32,16 @@ MockGPIO.LOW = 0;
 
 module.exports = {
   create: () => {
-    try {
-      return require('onoff').Gpio;
-    } catch (e) {
-      console.error('Using mock Gpio');
+    if (process.argv.find(function(elem) { return elem.includes('mockgpio'); }) != undefined) {
+      console.log('Using mock Gpio');
       return MockGPIO;
+    } else {
+      try {
+        return require('onoff').Gpio;
+      } catch (e) {
+        console.error('Using mock Gpio');
+        return MockGPIO;
+      }
     }
   }
 };
