@@ -11,22 +11,22 @@ const hifan = new gpio(25, 'out');
 function dolight(turnon) {
     console.log('setting light to %s', turnon);
     if (turnon) {
-        light.write(1);
+        light.writeSync(1);
     } else {
-        light.write(0);
+        light.writeSync(0);
     }
 }
 
 function dofan(speed) {
-    lofan.write(0);
-    medfan.write(0);
-    hifan.write(0);
+    lofan.writeSync(0);
+    medfan.writeSync(0);
+    hifan.writeSync(0);
     if (speed > 0) {
         console.log('setting fan to speed %d', speed);
         switch(speed) {
-            case 1: lofan.write(1); break;
-            case 2: medfan.write(1); break;
-            case 3: hifan.write(1); break;
+            case 1: lofan.writeSync(1); break;
+            case 2: medfan.writeSync(1); break;
+            case 3: hifan.writeSync(1); break;
         }
     } else {
         console.log('turned fan off')
