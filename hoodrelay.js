@@ -64,7 +64,7 @@ app.post('/fan', function (req, res) {
 });
 
 app.get('/state', function (req, res) {
-    console.log('received GET: %s', req.query.originalUrl);
+    console.log('received GET: %s', req.originalUrl);
     var fanval = 0; 
     var lightval = light.read();
     if (lofan.read() === 1) {
