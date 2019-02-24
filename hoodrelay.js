@@ -3,10 +3,10 @@ const gpio = GpioFactory.create();
 const express = require('express');
 var app = express();
 
-const light = new gpio(7, 'out');
-const lofan = new gpio(3, 'out');
-const medfan = new gpio(22, 'out');
-const hifan = new gpio(25, 'out');
+const light = new gpio(4, 'out');
+const lofan = new gpio(22, 'out');
+const medfan = new gpio(6, 'out');
+const hifan = new gpio(26, 'out');
 
 function dolight(turnon) {
     console.log('setting light to %s', turnon);
