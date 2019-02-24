@@ -10,11 +10,12 @@ app.use(function(req, res, next) {
   });
 
 app.post('/pin', function (req, res) {
-    console.log('received POST: %s', req.query);
+    console.log('received POST: %s', req.originalUrl);
     var val = req.query.value;
     var pin = new gpio(val, 'out');
     pin.writeSync(1);
     pin.writeSync(0);
+    res.statusCode = 400;
 });
 
 var server = app.listen(8082, function () {
