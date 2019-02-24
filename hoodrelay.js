@@ -3,10 +3,12 @@ const gpio = GpioFactory.create();
 const express = require('express');
 var app = express();
 
-const light = new gpio(4, 'out');
-const lofan = new gpio(22, 'out');
-const medfan = new gpio(6, 'out');
-const hifan = new gpio(26, 'out');
+// pins used to control relays on Keyestudio 4-channel
+// relay shield used with Raspberry Pi 3
+const light = new gpio(26, 'out'); // relay 4
+const lofan = new gpio(22, 'out'); // relay 3
+const medfan = new gpio(6, 'out'); // relay 2
+const hifan = new gpio(26, 'out'); // relay 1
 
 function dolight(turnon) {
     console.log('setting light to %s', turnon);
