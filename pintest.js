@@ -14,11 +14,11 @@ app.post('/pin', function (req, res) {
     var val = req.query.value;
     var pin = new gpio(val, 'out');
     pin.writeSync(1);
-    ping.writeSync(0);
+    pin.writeSync(0);
 });
 
 var server = app.listen(8082, function () {
     var host = server.address().address
     var port = server.address().port
-    console.log("HoodRelay app listening at http://%s:%s", host, port)
+    console.log("pintest app listening at http://%s:%s", host, port)
  });
