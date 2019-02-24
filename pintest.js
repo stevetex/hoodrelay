@@ -14,8 +14,8 @@ app.post('/pin', function (req, res) {
     var val = req.query.value;
     var pin = new gpio(val, 'out');
     pin.writeSync(1);
-    pin.writeSync(0);
-    res.status(200).send('pin written');
+//    pin.writeSync(0);
+    res.status(200).send('pin written\n');
 });
 
 var server = app.listen(8082, function () {
