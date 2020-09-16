@@ -3,33 +3,35 @@ import os
  
 from flask import Flask
 from flask_ask import Ask, request, session, question, statement
-import RPi.GPIO as GPIO
+import requests
  
 app = Flask(__name__)
 ask = Ask(app, "/")
 logging.getLogger('flask_ask').setLevel(logging.DEBUG)
  
 STATUSON = ["on", "switch on", "enable", "power on", "activate", "turn on"] # all values that are defined as synonyms in type
-STATUSOFF = ["off", "switch off", "disactivate", "turn off", "disable", "turn off"]
+STATUSOFF = ["off", "switch off", "disable", "power off", "deactivate", "turn off"]
  
 @ask.launch
 def launch():
-    speech_text = 'Welcome to the Raspberry Pi alexa automation.'
+    speech_text = 'Welcome to the Hood Pi alexa automation.'
     return question(speech_text).reprompt(speech_text).simple_card(speech_text)
  
 @ask.intent('LightIntent', mapping = {'status':'status'})
-def Gpio_Intent(status,room):
-    GPIO.setwarnings(False)
-    GPIO.setmode(GPIO.BCM)
-    GPIO.setup(17,GPIO.OUT)
+def HoodLight_Intent(status,room):
+    err = True
     if status in STATUSON:
-        GPIO.output(17,GPIO.HIGH)
-        return statement('Light was turned on')
+        response = requests.get("http://hoodpi:8081/light?value=on")
+        if response.status_code == 200:
+            err = False
+            return statement("Hood light turned on")
     elif status in STATUSOFF:
-        GPIO.output(17,GPIO.LOW)
-        return statement('Light was turned off')
-    else:
-        return statement('Sorry, this command is not possible.')
+        response = requests.get("http://hoodpi:8081/light?value=off")
+        if response.status_code == 200:
+            err = False
+            return statement("Hood light turned off")
+    if err:
+        return statement('Sorry, Hood Pi just cannot with this.')
  
 @ask.intent('AMAZON.HelpIntent')
 def help():
